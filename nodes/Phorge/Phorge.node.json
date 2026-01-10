@@ -1,17 +1,17 @@
 {
-	"node": "n8n-nodes-example",
+	"node": "n8n-nodes-phorge.Phorge",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Development", "Developer Tools"],
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file#credentials"
+				"url": "https://github.com/Tagnard/n8n-nodes-phorge"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file"
+				"url": "https://github.com/Tagnard/n8n-nodes-phorge"
 			}
 		]
 	}
