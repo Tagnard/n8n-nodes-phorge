@@ -1,5 +1,6 @@
 import type {
 	Icon,
+	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
@@ -7,7 +8,7 @@ import type {
 export class PhorgeApi implements ICredentialType {
 	name = 'phorgeApi';
 
-	displayName = 'Phorge API';
+	displayName = 'Phorge Conduit API';
 
 	icon: Icon = { light: 'file:../icons/github.svg', dark: 'file:../icons/github.dark.svg' };
 
@@ -29,4 +30,18 @@ export class PhorgeApi implements ICredentialType {
 			default: '',
 		},
 	];
+
+	test: ICredentialTestRequest = {
+		request: {
+			method: 'POST',
+			baseURL: '={{ $credentials.host }}',
+			url: '/api/user.whoami',
+			body: {
+				'api.token': '={{ $credentials.token }}',
+			},
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		},
+	};
 }
