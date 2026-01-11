@@ -1,11 +1,16 @@
 {
   "name": "n8n-nodes-phorge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n nodes for Phorge",
   "license": "MIT",
   "homepage": "",
-  "keywords": ["n8n-community-node-package"],
-  "author": { "name": "Emil Haugbergsmyr", "email": "rrvenn@proton.me" },
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Emil Haugbergsmyr",
+    "email": "rrvenn@proton.me"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Tagnard/n8n-nodes-phorge.git"
@@ -19,11 +24,15 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": false,
-    "credentials": ["dist/credentials/PhorgeApi.credentials.js"],
+    "credentials": [
+      "dist/credentials/PhorgeApi.credentials.js"
+    ],
     "nodes": [
       "dist/nodes/Phorge/Phorge.node.js",
       "dist/nodes/PhorgeTrigger/PhorgeTrigger.node.js"
@@ -36,6 +45,10 @@
     "release-it": "^19.0.4",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" },
-  "dependencies": { "phorge-ts": "^0.1.0" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "phorge-ts": "^0.1.0"
+  }
 }
