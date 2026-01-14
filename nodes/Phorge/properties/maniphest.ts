@@ -440,7 +440,7 @@ export const taskSearchAttachments: INodeProperties = {
 	description: 'Specify which attachments to include in the response',
 	displayOptions: {
 		show: {
-			action: ['searchTask'],
+			action: ['search'],
 		},
 	},
 	options: [
@@ -466,7 +466,8 @@ export const taskSearchConstraints: INodeProperties = {
 	default: {},
 	displayOptions: {
 		show: {
-			action: ['searchTask'],
+			operation: ['task'],
+			action: ['search'],
 		},
 	},
 	options: taskSearchConstraintsOptions,
@@ -482,7 +483,6 @@ const createTaskProperties: INodeProperties[] = [
   viewPolicy,
   column,
   comment,
-  description,
   mfa,
   owner,
   parent,
@@ -500,21 +500,21 @@ const createTaskProperties: INodeProperties[] = [
   space,
   status,
   subtype,
-  title,
 ];
 
 export const taskCreateOptions: INodeProperties = {
-	displayName: 'Options',
+	displayName: 'Additional Fields',
 	name: 'taskCreateOptions',
 	type: 'collection',
 	default: { title: '', description: '' },
-	displayOptions: {
-		show: {
-			action: ['createTask'],
-		},
-	},
 	options: createTaskProperties,
 };
+
+export const taskCraeteProperties: INodeProperties[] = [
+	title,
+	description,
+	taskCreateOptions,
+];
 
 export const taskUpdateProperties: INodeProperties[] = [
 	{
@@ -527,7 +527,8 @@ export const taskUpdateProperties: INodeProperties[] = [
 		description: 'PHID of the task to update',
 		displayOptions: {
 			show: {
-				action: ['updateTask'],
+				operation: ['task'],
+				action: ['edit'],
 			},
 		},
 	},
@@ -540,7 +541,8 @@ export const taskUpdateOptions: INodeProperties = {
 	default: {},
 	displayOptions: {
 		show: {
-			action: ['updateTask'],
+			operation: ['task'],
+			action: ['edit'],
 		},
 	},
 	options: createTaskProperties,

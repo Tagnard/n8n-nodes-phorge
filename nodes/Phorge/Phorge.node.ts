@@ -13,14 +13,8 @@ import {
 import type { PHID, ProjectSearchOptions, UserSearchOptions } from 'phorge-ts';
 import { connectToPhorgeServer } from './helpers';
 import {
-	taskSearchAttachments,
-	taskSearchConstraints,
-	taskCreateOptions,
-	taskUpdateProperties,
-	taskUpdateOptions,
+	taskCraeteProperties,
 } from './properties/maniphest';
-import { projectSearchAttachments, projectSearchConstraints } from './properties/project';
-import { userSearchAttachments, userSearchConstraints } from './properties/user';
 import { searchTask } from './actions/searchTask';
 import { createTask } from './actions/createTask';
 import { updateTask } from './actions/updateTask';
@@ -57,19 +51,16 @@ export class Phorge implements INodeType {
 				noDataExpression: true,
 				required: true,
 				options: [
-					// Task Resource
 					{
 						name: 'Task',
 						value: 'task',
 						description: 'Operations on tasks',
 					},
-					// Project Resource
 					{
 						name: 'Project',
 						value: 'project',
 						description: 'Operations on projects',
 					},
-					// User Resource
 					{
 						name: 'User',
 						value: 'user',
@@ -78,81 +69,97 @@ export class Phorge implements INodeType {
 				],
 				default: 'task',
 			},
+			// ----------------------------------
+			//         operations
+			// ----------------------------------
 			{
-				displayName: 'Action',
-				name: 'action',
+				displayName: 'Operation',
+				name: 'operation',
 				type: 'options',
-
 				noDataExpression: true,
-				required: true,
+				displayOptions: {
+					show: {
+						resource: ['task'],
+					},
+				},
 				options: [
 					{
-						name: 'Create Task',
-						value: 'createTask',
-						description: 'Create a task',
-						action: 'Create a task',
-						displayOptions: {
-							show: {
-								resource: ['task'],
-							},
-						},
+						name: 'Create',
+						value: 'create',
+						description: 'Create a new task',
+						action: 'Create an task',
 					},
 					{
-						name: 'Search Project',
-						value: 'searchProject',
-						description: 'Search for a project',
-						action: 'Search for a project',
-						displayOptions: {
-							show: {
-								resource: ['project'],
-							},
-						},
+						name: 'Create Comment',
+						value: 'createComment',
+						description: 'Create a new comment on an task',
+						action: 'Create a comment on an task',
 					},
 					{
-						name: 'Search Task',
-						value: 'searchTask',
-						description: 'Search for a task',
-						action: 'Search for a task',
-						displayOptions: {
-							show: {
-								resource: ['task'],
-							},
-						},
+						name: 'Edit',
+						value: 'edit',
+						description: 'Edit an task',
+						action: 'Edit an task',
 					},
 					{
-						name: 'Search User',
-						value: 'searchUser',
-						description: 'Search for a user',
-						action: 'Search for a user',
-						displayOptions: {
-							show: {
-								resource: ['user'],
-							},
-						},
-					},
-					{
-						name: 'Update Task',
-						value: 'updateTask',
-						description: 'Update a task',
-						action: 'Update a task',
-						displayOptions: {
-							show: {
-								resource: ['task'],
-							},
-						},
+						name: 'Get',
+						value: 'get',
+						description: 'Get the data of a single task',
+						action: 'Get an task',
 					},
 				],
-				default: 'searchTask',
+				default: 'create',
 			},
-			taskSearchAttachments,
-			taskSearchConstraints,
-			taskCreateOptions,
-			...taskUpdateProperties,
-			taskUpdateOptions,
-			projectSearchAttachments,
-			projectSearchConstraints,
-			userSearchAttachments,
-			userSearchConstraints,
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['project'],
+					},
+				},
+				options: [
+					{
+						name: 'Search',
+						value: 'search',
+						description: 'Search for projects',
+						action: 'Search for projects',
+					},
+				],
+				default: 'search',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: ['user'],
+					},
+				},
+				options: [
+					{
+						name: 'Search',
+						value: 'search',
+						description: 'Search for users',
+						action: 'Search for users',
+					},
+				],
+				default: 'search',
+			},
+			...taskCraeteProperties,
+			// taskSearchAttachments,
+			// taskSearchConstraints,
+			// 
+			// ...taskUpdateProperties,
+			// taskUpdateOptions,
+			// projectSearchAttachments,
+			// projectSearchConstraints,
+			// userSearchAttachments,
+			// userSearchConstraints,
 		],
 	};
 
@@ -165,11 +172,11 @@ export class Phorge implements INodeType {
 		let returnItems: INodeExecutionData[] = [];
 
 		if (resource === 'task') {
-			if (action === 'searchTask') {
+			if (action === 'search') {
 				returnItems = await searchTask(this);
-			} else if (action === 'createTask') {
+			} else if (action === 'create') {
 				returnItems = await createTask(this);
-			} else if (action === 'updateTask') {
+			} else if (action === 'edit') {
 				returnItems = await updateTask(this);
 			}
 		} else if (resource === 'project') {
