@@ -8,7 +8,7 @@ import {
 } from 'n8n-workflow';
 import { PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
-import { TaskTransactions } from 'phorge-ts/dist/models/maniphest';
+import { TaskTransaction } from 'phorge-ts/dist/models/maniphest';
 
 export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
@@ -52,109 +52,103 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		);
 	}
 
-	const transaction: TaskTransactions = {
-		title: fields.title,
-		description: fields.description,
-	};
+	const transactions: TaskTransaction[] = [
+		{ type: 'title', value: fields.title },
+		{ type: 'description', value: fields.description },
+	];
 
-	if (fields.editPolicy) transaction.edit = fields.editPolicy;
-	if (fields.viewPolicy) transaction.view = fields.viewPolicy;
-	if (fields.column) transaction.column = fields.column;
-	if (fields.comment) transaction.comment = fields.comment;
-	if (fields.mfa) transaction.mfa = fields.mfa;
-	if (fields.owner) transaction.owner = fields.owner;
-	if (fields.priority) transaction.priority = fields.priority;
-	if (fields.space) transaction.space = fields.space as PHID<'SPCE'>;
-	if (fields.status) transaction.status = fields.status;
-	if (fields.subtype) transaction.subtype = fields.subtype;
+	if (fields.editPolicy)
+		transactions.push({ type: 'edit', value: fields.editPolicy as string });
+	if (fields.viewPolicy)
+		transactions.push({ type: 'view', value: fields.viewPolicy as string });
+	if (fields.column) transactions.push({ type: 'column', value: fields.column });
+	if (fields.comment) transactions.push({ type: 'comment', value: fields.comment });
+	if (fields.mfa) transactions.push({ type: 'mfa', value: fields.mfa });
+	if (fields.owner) transactions.push({ type: 'owner', value: fields.owner });
+	if (fields.priority) transactions.push({ type: 'priority', value: fields.priority });
+	if (fields.space) transactions.push({ type: 'space', value: fields.space });
+	if (fields.status) transactions.push({ type: 'status', value: fields.status });
+	if (fields.subtype) transactions.push({ type: 'subtype', value: fields.subtype });
 
 	if (fields.addCommits) {
-		transaction.commits = transaction.commits || {};
-		transaction.commits = {
-			add: stringToArray<PHID<'CMIT'>>(fields.addCommits),
-		};
+		transactions.push({ type: 'commits.add', value: stringToArray(fields.addCommits as string) });
+	}
+	if (fields.removeCommits) {
+		transactions.push({
+			type: 'commits.remove',
+			value: stringToArray(fields.removeCommits as string),
+		});
+	}
+	if (fields.setCommits) {
+		transactions.push({ type: 'commits.set', value: stringToArray(fields.setCommits as string) });
 	}
 
 	if (fields.addParents) {
-		transaction.parents = transaction.parents || {};
-		transaction.parents = {
-			add: stringToArray<PHID<'TASK'>>(fields.addParents),
-		};
+		transactions.push({ type: 'parents.add', value: stringToArray(fields.addParents as string) });
+	}
+	if (fields.removeParents) {
+		transactions.push({
+			type: 'parents.remove',
+			value: stringToArray(fields.removeParents as string),
+		});
+	}
+	if (fields.setParents) {
+		transactions.push({ type: 'parents.set', value: stringToArray(fields.setParents as string) });
 	}
 
 	if (fields.addProjects) {
-		transaction.projects = transaction.projects || {};
-		transaction.projects = {
-			add: stringToArray<PHID<'PROJ'>>(fields.addProjects),
-		};
+		transactions.push({
+			type: 'projects.add',
+			value: stringToArray(fields.addProjects as string),
+		});
+	}
+	if (fields.removeProjects) {
+		transactions.push({
+			type: 'projects.remove',
+			value: stringToArray(fields.removeProjects as string),
+		});
+	}
+	if (fields.setProjects) {
+		transactions.push({
+			type: 'projects.set',
+			value: stringToArray(fields.setProjects as string),
+		});
 	}
 
 	if (fields.addSubscribers) {
-		transaction.subscribers = transaction.subscribers || {};
-		transaction.subscribers = {
-			add: stringToArray<PHID<'USER'>>(fields.addSubscribers),
-		};
+		transactions.push({
+			type: 'subscribers.add',
+			value: stringToArray(fields.addSubscribers as string),
+		});
+	}
+	if (fields.removeSubscribers) {
+		transactions.push({
+			type: 'subscribers.remove',
+			value: stringToArray(fields.removeSubscribers as string),
+		});
+	}
+	if (fields.setSubscribers) {
+		transactions.push({
+			type: 'subscribers.set',
+			value: stringToArray(fields.setSubscribers as string),
+		});
 	}
 
 	if (fields.addSubtasks) {
-		transaction.subtasks = transaction.subtasks || {};
-		transaction.subtasks = {
-			add: stringToArray<PHID<'TASK'>>(fields.addSubtasks),
-		};
+		transactions.push({ type: 'subtasks.add', value: stringToArray(fields.addSubtasks as string) });
 	}
-
-	if (fields.removeCommits) {
-		transaction.commits = transaction.commits || {};
-		transaction.commits.remove = stringToArray<PHID<'CMIT'>>(fields.removeCommits);
-	}
-
-	if (fields.removeParents) {
-		transaction.parents = transaction.parents || {};
-		transaction.parents.remove = stringToArray<PHID<'TASK'>>(fields.removeParents);
-	}
-
-	if (fields.removeProjects) {
-		transaction.projects = transaction.projects || {};
-		transaction.projects.remove = stringToArray<PHID<'PROJ'>>(fields.removeProjects);
-	}
-
-	if (fields.removeSubscribers) {
-		transaction.subscribers = transaction.subscribers || {};
-		transaction.subscribers.remove = stringToArray<PHID<'USER'>>(fields.removeSubscribers);
-	}
-
 	if (fields.removeSubtasks) {
-		transaction.subtasks = transaction.subtasks || {};
-		transaction.subtasks.remove = stringToArray<PHID<'TASK'>>(fields.removeSubtasks);
+		transactions.push({
+			type: 'subtasks.remove',
+			value: stringToArray(fields.removeSubtasks as string),
+		});
 	}
-
-	if (fields.setCommits) {
-		transaction.commits = transaction.commits || {};
-		transaction.commits.set = stringToArray<PHID<'CMIT'>>(fields.setCommits);
-	}
-
-	if (fields.setParents) {
-		transaction.parents = transaction.parents || {};
-		transaction.parents.set = stringToArray<PHID<'TASK'>>(fields.setParents);
-	}
-
-	if (fields.setProjects) {
-		transaction.projects = transaction.projects || {};
-		transaction.projects.set = stringToArray<PHID<'PROJ'>>(fields.setProjects);
-	}
-
-	if (fields.setSubscribers) {
-		transaction.subscribers = transaction.subscribers || {};
-		transaction.subscribers.set = stringToArray<PHID<'USER'>>(fields.setSubscribers);
-	}
-
 	if (fields.setSubtasks) {
-		transaction.subtasks = transaction.subtasks || {};
-		transaction.subtasks.set = stringToArray<PHID<'TASK'>>(fields.setSubtasks);
+		transactions.push({ type: 'subtasks.set', value: stringToArray(fields.setSubtasks as string) });
 	}
 
 	try {
-		const createdTask = await client.createTask(transaction);
+		const createdTask = await client.createTask(transactions);
 
 		returnItems.push({
 			json: createdTask as IDataObject,

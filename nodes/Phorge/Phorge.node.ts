@@ -201,6 +201,7 @@ export class Phorge implements INodeType {
 				};
 
 				const params: ProjectSearchOptions = {};
+				const constraints: IDataObject = {};
 
 				const attachments = this.getNodeParameter('attachments', 0) as string[];
 				if (attachments.length > 0) {
@@ -216,58 +217,52 @@ export class Phorge implements INodeType {
 
 				// IDs
 				if (projectSearchConstraints.ids) {
-					params.constraints = params.constraints || {};
 					const ids_list = projectSearchConstraints.ids
 						.split(',')
 						.map((id) => id.trim())
 						.filter(Boolean);
-					params.constraints.ids = ids_list as unknown as number[];
+					constraints.ids = ids_list as unknown as number[];
 				}
 
 				// PHIDs
 				if (projectSearchConstraints.phids) {
-					params.constraints = params.constraints || {};
 					const ids_list = projectSearchConstraints.phids
 						.split(',')
 						.map((id) => id.trim())
 						.filter(Boolean);
-					params.constraints.phids = ids_list as PHID<'PROJ'>[];
+					constraints.phids = ids_list as PHID<'PROJ'>[];
 				}
 
 				// Slugs
 				if (projectSearchConstraints.slugs) {
-					params.constraints = params.constraints || {};
 					const slugs_list = projectSearchConstraints.slugs
 						.split(',')
 						.map((s) => s.trim())
 						.filter(Boolean);
-					params.constraints.slugs = slugs_list;
+					constraints.slugs = slugs_list;
 				}
 
 				// Members
 				if (projectSearchConstraints.members) {
-					params.constraints = params.constraints || {};
 					const members_list = projectSearchConstraints.members
 						.split(',')
 						.map((m) => m.trim())
 						.filter(Boolean);
-					params.constraints.members = members_list as PHID<'USER'>[];
+					constraints.members = members_list as PHID<'USER'>[];
 				}
 
 				// Watchers
 				if (projectSearchConstraints.watchers) {
-					params.constraints = params.constraints || {};
 					const watchers_list = projectSearchConstraints.watchers
 						.split(',')
 						.map((w) => w.trim())
 						.filter(Boolean);
-					params.constraints.watchers = watchers_list as PHID<'USER'>[];
+					constraints.watchers = watchers_list as PHID<'USER'>[];
 				}
 
 				// Status
 				if (projectSearchConstraints.status) {
-					params.constraints = params.constraints || {};
-					params.constraints.status = projectSearchConstraints.status as
+					constraints.status = projectSearchConstraints.status as
 						| 'active'
 						| 'archived'
 						| 'all';
@@ -275,82 +270,76 @@ export class Phorge implements INodeType {
 
 				// isMilestone
 				if (projectSearchConstraints.isMilestone !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isMilestone = projectSearchConstraints.isMilestone;
+					constraints.isMilestone = projectSearchConstraints.isMilestone;
 				}
 
 				// isRoot
 				if (projectSearchConstraints.isRoot !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isRoot = projectSearchConstraints.isRoot;
+					constraints.isRoot = projectSearchConstraints.isRoot;
 				}
 
 				// minDepth
 				if (projectSearchConstraints.minDepth !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.minDepth = projectSearchConstraints.minDepth;
+					constraints.minDepth = projectSearchConstraints.minDepth;
 				}
 
 				// maxDepth
 				if (projectSearchConstraints.maxDepth !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.maxDepth = projectSearchConstraints.maxDepth;
+					constraints.maxDepth = projectSearchConstraints.maxDepth;
 				}
 
 				// subtypes
 				if (projectSearchConstraints.subtypes) {
-					params.constraints = params.constraints || {};
 					const subtypes_list = projectSearchConstraints.subtypes
 						.split(',')
 						.map((s) => s.trim())
 						.filter(Boolean);
-					params.constraints.subtypes = subtypes_list;
+					constraints.subtypes = subtypes_list;
 				}
 
 				// icons
 				if (projectSearchConstraints.icons) {
-					params.constraints = params.constraints || {};
 					const icons_list = projectSearchConstraints.icons
 						.split(',')
 						.map((i) => i.trim())
 						.filter(Boolean);
-					params.constraints.icons = icons_list;
+					constraints.icons = icons_list;
 				}
 
 				// colors
 				if (projectSearchConstraints.colors) {
-					params.constraints = params.constraints || {};
 					const colors_list = projectSearchConstraints.colors
 						.split(',')
 						.map((c) => c.trim())
 						.filter(Boolean);
-					params.constraints.colors = colors_list;
+					constraints.colors = colors_list;
 				}
 
 				// parents
 				if (projectSearchConstraints.parents) {
-					params.constraints = params.constraints || {};
 					const parents_list = projectSearchConstraints.parents
 						.split(',')
 						.map((p) => p.trim())
 						.filter(Boolean);
-					params.constraints.parents = parents_list as PHID<'PROJ'>[];
+					constraints.parents = parents_list as PHID<'PROJ'>[];
 				}
 
 				// ancestors
 				if (projectSearchConstraints.ancestors) {
-					params.constraints = params.constraints || {};
 					const ancestors_list = projectSearchConstraints.ancestors
 						.split(',')
 						.map((a) => a.trim())
 						.filter(Boolean);
-					params.constraints.ancestors = ancestors_list as PHID<'PROJ'>[];
+					constraints.ancestors = ancestors_list as PHID<'PROJ'>[];
 				}
 
 				// query
 				if (projectSearchConstraints.query) {
-					params.constraints = params.constraints || {};
-					params.constraints.query = projectSearchConstraints.query;
+					constraints.query = projectSearchConstraints.query;
+				}
+
+				if (Object.keys(constraints).length > 0) {
+					params.constraints = constraints;
 				}
 
 				const projects = await client.searchProject(params);
@@ -378,95 +367,87 @@ export class Phorge implements INodeType {
 				};
 
 				const params: UserSearchOptions = {};
+				const constraints: IDataObject = {};
 
 				// IDs
 				if (userSearchConstraints.ids) {
-					params.constraints = params.constraints || {};
 					const ids_list = userSearchConstraints.ids
 						.split(',')
 						.map((id) => id.trim())
 						.filter(Boolean);
-					params.constraints.ids = ids_list as unknown as number[];
+					constraints.ids = ids_list as unknown as number[];
 				}
 
 				// PHIDs
 				if (userSearchConstraints.phids) {
-					params.constraints = params.constraints || {};
 					const ids_list = userSearchConstraints.phids
 						.split(',')
 						.map((id) => id.trim())
 						.filter(Boolean);
-					params.constraints.phids = ids_list as PHID<'USER'>[];
+					constraints.phids = ids_list as PHID<'USER'>[];
 				}
 
 				// Usernames
 				if (userSearchConstraints.usernames) {
-					params.constraints = params.constraints || {};
 					const usernames_list = userSearchConstraints.usernames
 						.split(',')
 						.map((u) => u.trim())
 						.filter(Boolean);
-					params.constraints.usernames = usernames_list;
+					constraints.usernames = usernames_list;
 				}
 
 				// nameLike
 				if (userSearchConstraints.nameLike) {
-					params.constraints = params.constraints || {};
-					params.constraints.nameLike = userSearchConstraints.nameLike;
+					constraints.nameLike = userSearchConstraints.nameLike;
 				}
 
 				// isAdmin
 				if (userSearchConstraints.isAdmin !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isAdmin = userSearchConstraints.isAdmin;
+					constraints.isAdmin = userSearchConstraints.isAdmin;
 				}
 
 				// isDisabled
 				if (userSearchConstraints.isDisabled !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isDisabled = userSearchConstraints.isDisabled;
+					constraints.isDisabled = userSearchConstraints.isDisabled;
 				}
 
 				// isBot
 				if (userSearchConstraints.isBot !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isBot = userSearchConstraints.isBot;
+					constraints.isBot = userSearchConstraints.isBot;
 				}
 
 				// isMailingList
 				if (userSearchConstraints.isMailingList !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.isMailingList = userSearchConstraints.isMailingList;
+					constraints.isMailingList = userSearchConstraints.isMailingList;
 				}
 
 				// needsApproval
 				if (userSearchConstraints.needsApproval !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.needsApproval = userSearchConstraints.needsApproval;
+					constraints.needsApproval = userSearchConstraints.needsApproval;
 				}
 
 				// mfa
 				if (userSearchConstraints.mfa !== undefined) {
-					params.constraints = params.constraints || {};
-					params.constraints.mfa = userSearchConstraints.mfa;
+					constraints.mfa = userSearchConstraints.mfa;
 				}
 
 				// createdAfter
 				if (userSearchConstraints.createdAfter) {
-					params.constraints = params.constraints || {};
-					params.constraints.createdStart = Number(userSearchConstraints.createdAfter);
+					constraints.createdStart = Number(userSearchConstraints.createdAfter);
 				}
 
 				// createdBefore
 				if (userSearchConstraints.createdBefore) {
-					params.constraints = params.constraints || {};
-					params.constraints.createdEnd = Number(userSearchConstraints.createdBefore);
+					constraints.createdEnd = Number(userSearchConstraints.createdBefore);
 				}
 
 				// query
 				if (userSearchConstraints.query) {
-					params.constraints = params.constraints || {};
-					params.constraints.query = userSearchConstraints.query;
+					constraints.query = userSearchConstraints.query;
+				}
+
+				if (Object.keys(constraints).length > 0) {
+					params.constraints = constraints;
 				}
 
 				const users = await client.searchUser(params);
@@ -488,7 +469,7 @@ export class Phorge implements INodeType {
 				if (allTagOptions.length === 0) {
 					const tags = await client.searchProject();
 					allTagOptions = tags.map((project) => ({
-						name: project.fields.name,
+						name: project.fields.name as string,
 						value: project.phid,
 					}));
 				}
