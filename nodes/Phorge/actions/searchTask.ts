@@ -47,11 +47,12 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		params.attachments = attachmentsObj;
 	}
 
+	const constraints: IDataObject = {};
+
 	// IDs
 	if (taskSearchConstraints.ids) {
-		params.constraints = params.constraints || {};
 		const ids_list = stringToArray(taskSearchConstraints.ids);
-		params.constraints.ids = ids_list as unknown as number[];
+		constraints.ids = ids_list as unknown as number[];
 	}
 
 	// PHIDs
@@ -64,24 +65,23 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 				'PHIDs must be a comma-separated list of valid TASK PHIDs, e.g., PHID-TASK-yi2nwyjcvkwskag5ncqx',
 			);
 		}
-
-		params.constraints = params.constraints || {};
-		params.constraints.phids = phids_list;
+		constraints.phids = phids_list;
 	}
 
 	if (taskSearchConstraints.createdBefore) {
-		params.constraints = params.constraints || {};
-		params.constraints.createdStart = Number(taskSearchConstraints.createdBefore);
+		constraints.createdStart = Number(taskSearchConstraints.createdBefore);
 	}
 
 	if (taskSearchConstraints.createdAfter) {
-		params.constraints = params.constraints || {};
-		params.constraints.createdEnd = Number(taskSearchConstraints.createdAfter);
+		constraints.createdEnd = Number(taskSearchConstraints.createdAfter);
 	}
 
 	if (taskSearchConstraints.query) {
-		params.constraints = params.constraints || {};
-		params.constraints.query = taskSearchConstraints.query;
+		constraints.query = taskSearchConstraints.query;
+	}
+
+	if (Object.keys(constraints).length > 0) {
+		params.constraints = constraints;
 	}
 
 	try {
