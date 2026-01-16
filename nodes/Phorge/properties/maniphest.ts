@@ -251,7 +251,7 @@ const comment: INodeProperties = {
 	description: 'Comment to add while creating the task',
 };
 
-const description: INodeProperties = {
+export const description: INodeProperties = {
 	displayName: 'Description',
 	name: 'description',
 	type: 'string',
@@ -262,6 +262,12 @@ const description: INodeProperties = {
 	default: '',
 	placeholder: 'This is an example task description.',
 	description: 'Description of the task to create',
+	displayOptions: {
+		show: {
+			resource: ['task'],
+			operation: ['create'],
+		},
+	},
 };
 
 const mfa: INodeProperties = {
@@ -397,13 +403,19 @@ const space: INodeProperties = {
 	description: 'PHID of the space to create the task in',
 };
 
-const title: INodeProperties = {
+export const title: INodeProperties = {
 	displayName: 'Title',
 	name: 'title',
 	type: 'string',
 	default: '',
 	placeholder: 'Example Task Title',
 	description: 'Title of the task to create',
+	displayOptions: {
+		show: {
+			resource: ['task'],
+			operation: ['create'],
+		},
+	},
 };
 
 const taskSearchConstraintsOptions: INodeProperties[] = [
@@ -440,7 +452,8 @@ export const taskSearchAttachments: INodeProperties = {
 	description: 'Specify which attachments to include in the response',
 	displayOptions: {
 		show: {
-			action: ['search'],
+			resource: ['task'],
+			operation: ['search'],
 		},
 	},
 	options: [
@@ -466,8 +479,8 @@ export const taskSearchConstraints: INodeProperties = {
 	default: {},
 	displayOptions: {
 		show: {
-			operation: ['task'],
-			action: ['search'],
+			resource: ['task'],
+			operation: ['search'],
 		},
 	},
 	options: taskSearchConstraintsOptions,
@@ -506,11 +519,17 @@ export const taskCreateOptions: INodeProperties = {
 	displayName: 'Additional Fields',
 	name: 'taskCreateOptions',
 	type: 'collection',
-	default: { title: '', description: '' },
+	default: {},
 	options: createTaskProperties,
+	displayOptions: {
+		show: {
+			resource: ['task'],
+			operation: ['create'],
+		},
+	},
 };
 
-export const taskCraeteProperties: INodeProperties[] = [
+export const taskCreateProperties: INodeProperties[] = [
 	title,
 	description,
 	taskCreateOptions,
@@ -527,8 +546,8 @@ export const taskUpdateProperties: INodeProperties[] = [
 		description: 'PHID of the task to update',
 		displayOptions: {
 			show: {
-				operation: ['task'],
-				action: ['edit'],
+				resource: ['task'],
+				operation: ['edit'],
 			},
 		},
 	},
@@ -541,8 +560,8 @@ export const taskUpdateOptions: INodeProperties = {
 	default: {},
 	displayOptions: {
 		show: {
-			operation: ['task'],
-			action: ['edit'],
+			resource: ['task'],
+			operation: ['edit'],
 		},
 	},
 	options: createTaskProperties,

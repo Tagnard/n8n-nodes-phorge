@@ -13,7 +13,7 @@ import {
 import type { PHID, ProjectSearchOptions, UserSearchOptions } from 'phorge-ts';
 import { connectToPhorgeServer } from './helpers';
 import {
-	taskCraeteProperties,
+	taskCreateProperties,
 } from './properties/maniphest';
 import { searchTask } from './actions/searchTask';
 import { createTask } from './actions/createTask';
@@ -150,14 +150,15 @@ export class Phorge implements INodeType {
 				],
 				default: 'search',
 			},
-			...taskCraeteProperties,
+			// Create Task
+			...taskCreateProperties
+			
 			// taskSearchAttachments,
 			// taskSearchConstraints,
-			// 
 			// ...taskUpdateProperties,
 			// taskUpdateOptions,
 			// projectSearchAttachments,
-			// projectSearchConstraints,
+			//projectSearchConstraints,
 			// userSearchAttachments,
 			// userSearchConstraints,
 		],
@@ -167,20 +168,20 @@ export class Phorge implements INodeType {
 		const { client } = await connectToPhorgeServer.call(this);
 
 		const resource = this.getNodeParameter('resource', 0);
-		const action = this.getNodeParameter('action', 0);
+		const operation = this.getNodeParameter('operation', 0);
 
 		let returnItems: INodeExecutionData[] = [];
 
 		if (resource === 'task') {
-			if (action === 'search') {
+			if (operation === 'search') {
 				returnItems = await searchTask(this);
-			} else if (action === 'create') {
+			} else if (operation === 'create') {
 				returnItems = await createTask(this);
-			} else if (action === 'edit') {
+			} else if (operation === 'edit') {
 				returnItems = await updateTask(this);
 			}
 		} else if (resource === 'project') {
-			if (action === 'searchProject') {
+			if (operation === 'search') {
 				const projectSearchConstraints = this.getNodeParameter('projectSearchConstraints', 0) as {
 					ids?: string;
 					phids?: string;
@@ -349,7 +350,7 @@ export class Phorge implements INodeType {
 				}));
 			}
 		} else if (resource === 'user') {
-			if (action == 'searchUser') {
+			if (operation == 'search') {
 				const userSearchConstraints = this.getNodeParameter('userSearchConstraints', 0) as {
 					ids?: string;
 					phids?: string;

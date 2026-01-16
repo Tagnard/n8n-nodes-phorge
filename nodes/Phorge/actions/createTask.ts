@@ -14,6 +14,9 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	const { client } = await connectToPhorgeServer.call(thisFunc);
 	const returnItems: INodeExecutionData[] = [];
 
+	const title = thisFunc.getNodeParameter('title', 0) as string;
+	const description = thisFunc.getNodeParameter('description', 0) as string;
+
 	const fields = thisFunc.getNodeParameter('taskCreateOptions', 0) as {
 		addCommits: string;
 		addParents: string;
@@ -45,7 +48,9 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		title: string;
 	};
 
-	if (!fields.title || !fields.description) {
+	thisFunc.logger.info(`Creating task with title: ${fields.title}`);
+
+	if (!title || !description) {
 		throw new NodeOperationError(
 			thisFunc.getNode(),
 			'Title and a Description is required to create a task',
@@ -53,8 +58,8 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	}
 
 	const transactions: TaskTransaction[] = [
-		{ type: 'title', value: fields.title },
-		{ type: 'description', value: fields.description },
+		{ type: 'title', value: title },
+		{ type: 'description', value: description },
 	];
 
 	if (fields.editPolicy)

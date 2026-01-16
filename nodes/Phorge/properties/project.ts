@@ -145,25 +145,6 @@ const query: INodeProperties = {
 	description: 'Find objects matching a fulltext search query',
 };
 
-const projectSearchConstraintsOptions: INodeProperties[] = [
-	ids,
-	phids('proj'),
-	slugs,
-	members,
-	watchers,
-	status,
-	isMilestone,
-	isRoot,
-	minDepth,
-	maxDepth,
-	subtypes,
-	icons,
-	colors,
-	parents,
-	ancestors,
-	query,
-];
-
 export const projectSearchAttachments: INodeProperties = {
 	displayName: 'Attachments',
 	name: 'attachments',
@@ -172,7 +153,8 @@ export const projectSearchAttachments: INodeProperties = {
 	description: 'Specify which attachments to include in the response',
 	displayOptions: {
 		show: {
-			action: ['searchProject'],
+			resource: ['project'],
+			action: ['search'],
 		},
 	},
 	options: [
@@ -196,10 +178,22 @@ export const projectSearchConstraints: INodeProperties = {
 	name: 'projectSearchConstraints',
 	type: 'collection',
 	default: {},
-	displayOptions: {
-		show: {
-			action: ['searchProject'],
-		},
-	},
-	options: projectSearchConstraintsOptions,
+	options: [
+		ids,
+		phids('proj'),
+		slugs,
+		members,
+		watchers,
+		status,
+		isMilestone,
+		isRoot,
+		minDepth,
+		maxDepth,
+		subtypes,
+		icons,
+		colors,
+		parents,
+		ancestors,
+		query,
+	],
 };
