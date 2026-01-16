@@ -1,36 +1,36 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
-
 import { IDataObject, IExecuteFunctions, INodeExecutionData, NodeOperationError } from 'n8n-workflow';
-import { TaskSearchOptions, PHID, TaskConstraints } from 'phorge-ts';
+import { TaskSearchOptions, PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
 
 export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
-    let returnItems: INodeExecutionData[] = [];
+	let returnItems: INodeExecutionData[] = [];
 
-    const taskSearchConstraints = thisFunc.getNodeParameter('taskSearchConstraints', 0) as {
+	const taskSearchConstraints = (thisFunc.getNodeParameter('taskSearchConstraints', 0) as {
 		ids?: string;
 		phids?: string;
 		assigned?: string;
 		authorPHIDs?: string;
-		statuses?: string;
+		status?: string;
 		priorities?: string;
-		subtypes?: string;
+		subtype?: string;
 		columnPHIDs?: string;
 		hasParents?: boolean;
 		hasSubtasks?: boolean;
-		groupBy?: string;
+		parentIDs?: string;
+		subtaskIDs?: string;
+		group?: string;
 		createdBefore?: string;
 		createdAfter?: string;
 		modifiedBefore?: string;
 		modifiedAfter?: string;
-		closedBefore?: string;
-		closedAfter?: string;
+		closedStart?: string;
+		closedEnd?: string;
 		closerPHIDs?: string;
 		query?: string;
 		subscribers?: string;
 		projects?: string;
-	};
+	}) || {};
 
 	const attachments = thisFunc.getNodeParameter('attachments', 0) as string[];
 
@@ -47,12 +47,11 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		params.attachments = attachmentsObj;
 	}
 
-	const constraints: TaskConstraints = {};
+	const constraints: IDataObject = {};
 
 	// IDs
 	if (taskSearchConstraints.ids) {
-		const ids_list = stringToArray(taskSearchConstraints.ids);
-		constraints.ids = ids_list as unknown as number[];
+		constraints.ids = stringToArray(taskSearchConstraints.ids).map(Number);
 	}
 
 	// PHIDs
@@ -69,19 +68,87 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	}
 
 	if (taskSearchConstraints.assigned) {
-		constraints.assigned = [taskSearchConstraints.assigned] as PHID<'USER'>[];
+		constraints.assigned = stringToArray<PHID<'USER'>>(taskSearchConstraints.assigned);
+	}
+
+	if (taskSearchConstraints.authorPHIDs) {
+		constraints.authorPHIDs = stringToArray<PHID<'USER'>>(taskSearchConstraints.authorPHIDs);
+	}
+
+	if (taskSearchConstraints.status) {
+		constraints.statuses = stringToArray(taskSearchConstraints.status);
+	}
+
+	if (taskSearchConstraints.priorities) {
+		constraints.priorities = stringToArray(taskSearchConstraints.priorities).map(Number);
+	}
+
+	if (taskSearchConstraints.subtype) {
+		constraints.subtypes = stringToArray(taskSearchConstraints.subtype);
+	}
+
+	if (taskSearchConstraints.columnPHIDs) {
+		constraints.columnPHIDs = stringToArray<PHID<'PCOL'>>(taskSearchConstraints.columnPHIDs);
+	}
+
+	if (taskSearchConstraints.hasParents !== undefined) {
+		constraints.hasParents = taskSearchConstraints.hasParents;
+	}
+
+	if (taskSearchConstraints.hasSubtasks !== undefined) {
+		constraints.hasSubtasks = taskSearchConstraints.hasSubtasks;
+	}
+
+	if (taskSearchConstraints.parentIDs) {
+		constraints.parentIDs = stringToArray<PHID<'TASK'>>(taskSearchConstraints.parentIDs);
+	}
+
+	if (taskSearchConstraints.subtaskIDs) {
+		constraints.subtaskIDs = stringToArray<PHID<'TASK'>>(taskSearchConstraints.subtaskIDs);
+	}
+
+	if (taskSearchConstraints.group && taskSearchConstraints.group !== 'none') {
+		constraints.group = taskSearchConstraints.group;
 	}
 
 	if (taskSearchConstraints.createdBefore) {
-		constraints.createdStart = Number(taskSearchConstraints.createdBefore);
+		constraints.createdEnd = Number(taskSearchConstraints.createdBefore);
 	}
 
 	if (taskSearchConstraints.createdAfter) {
-		constraints.createdEnd = Number(taskSearchConstraints.createdAfter);
+		constraints.createdStart = Number(taskSearchConstraints.createdAfter);
+	}
+
+	if (taskSearchConstraints.modifiedBefore) {
+		constraints.modifiedEnd = Number(taskSearchConstraints.modifiedBefore);
+	}
+
+	if (taskSearchConstraints.modifiedAfter) {
+		constraints.modifiedStart = Number(taskSearchConstraints.modifiedAfter);
+	}
+
+	if (taskSearchConstraints.closedStart) {
+		constraints.closedStart = Number(taskSearchConstraints.closedStart);
+	}
+
+	if (taskSearchConstraints.closedEnd) {
+		constraints.closedEnd = Number(taskSearchConstraints.closedEnd);
+	}
+
+	if (taskSearchConstraints.closerPHIDs) {
+		constraints.closerPHIDs = stringToArray<PHID<'USER'>>(taskSearchConstraints.closerPHIDs);
 	}
 
 	if (taskSearchConstraints.query) {
 		constraints.query = taskSearchConstraints.query;
+	}
+
+	if (taskSearchConstraints.subscribers) {
+		constraints.subscribers = stringToArray<PHID<'USER'>>(taskSearchConstraints.subscribers);
+	}
+
+	if (taskSearchConstraints.projects) {
+		constraints.projects = stringToArray<PHID<'PROJ'>>(taskSearchConstraints.projects);
 	}
 
 	if (Object.keys(constraints).length > 0) {
