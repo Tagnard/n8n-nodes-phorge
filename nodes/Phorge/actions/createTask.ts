@@ -42,7 +42,7 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		setProjects: string;
 		setSubscribers: string;
 		setSubtasks: string;
-		space: string;
+		space: PHID<'SPCE'>;
 		status: string;
 		subtype: string;
 		title: string;
