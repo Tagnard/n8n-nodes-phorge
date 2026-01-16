@@ -10,6 +10,8 @@ import {
     NodeOperationError,
 } from 'n8n-workflow';
 import { Client, TaskSearchOptions } from 'phorge-ts';
+import { taskSearchConstraintsOptions } from '../Phorge/properties/maniphest';
+import { buildConstraints } from '../Phorge/FilterHelper';
 
 export class PhorgeTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -51,6 +53,14 @@ export class PhorgeTrigger implements INodeType {
 					},
 				],
 			},
+			{
+				displayName: 'Filters',
+				name: 'filters',
+				type: 'collection',
+				default: {},
+				placeholder: 'Add Filter',
+				options: taskSearchConstraintsOptions,
+			},
 		],
 	};
 
@@ -69,11 +79,15 @@ export class PhorgeTrigger implements INodeType {
 
 		const client = new Client(auth.host, auth.token);
 
+		const filters = this.getNodeParameter('filters', 0) as IDataObject;
+		const constraints = buildConstraints(filters, this.getNode);
+
 		// Implement your polling logic here based on the selected event
 		if (event === 'taskCreated') {
 			try {
 				const items = await client.searchTask({
                     constraints: {
+						...constraints,
                         createdStart: lastPoll,
                     },
                 } as TaskSearchOptions)
@@ -95,6 +109,7 @@ export class PhorgeTrigger implements INodeType {
 			try {
 				const items = await client.searchTask({
                     constraints: {
+						...constraints,
                         modifiedStart: lastPoll,
                     },
                 } as TaskSearchOptions)

@@ -1,6 +1,7 @@
 import { IDataObject, IExecuteFunctions, INodeExecutionData, NodeOperationError } from 'n8n-workflow';
-import { TaskSearchOptions, PHID } from 'phorge-ts';
-import { connectToPhorgeServer, stringToArray } from '../helpers';
+import { TaskSearchOptions } from 'phorge-ts';
+import { connectToPhorgeServer } from '../helpers';
+import { buildConstraints } from '../FilterHelper';
 
 export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
@@ -47,109 +48,7 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		params.attachments = attachmentsObj;
 	}
 
-	const constraints: IDataObject = {};
-
-	// IDs
-	if (taskSearchConstraints.ids) {
-		constraints.ids = stringToArray(taskSearchConstraints.ids).map(Number);
-	}
-
-	// PHIDs
-	if (taskSearchConstraints.phids) {
-		const phids_list = stringToArray<PHID<'TASK'>>(taskSearchConstraints.phids);
-		const phidRegex = /^PHID-TASK-[a-z0-9]+$/;
-		if (!phids_list.every((p) => phidRegex.test(p))) {
-			throw new NodeOperationError(
-				thisFunc.getNode(),
-				'PHIDs must be a comma-separated list of valid TASK PHIDs, e.g., PHID-TASK-yi2nwyjcvkwskag5ncqx',
-			);
-		}
-		constraints.phids = phids_list;
-	}
-
-	if (taskSearchConstraints.assigned) {
-		constraints.assigned = stringToArray<PHID<'USER'>>(taskSearchConstraints.assigned);
-	}
-
-	if (taskSearchConstraints.authorPHIDs) {
-		constraints.authorPHIDs = stringToArray<PHID<'USER'>>(taskSearchConstraints.authorPHIDs);
-	}
-
-	if (taskSearchConstraints.status) {
-		constraints.statuses = stringToArray(taskSearchConstraints.status);
-	}
-
-	if (taskSearchConstraints.priorities) {
-		constraints.priorities = stringToArray(taskSearchConstraints.priorities).map(Number);
-	}
-
-	if (taskSearchConstraints.subtype) {
-		constraints.subtypes = stringToArray(taskSearchConstraints.subtype);
-	}
-
-	if (taskSearchConstraints.columnPHIDs) {
-		constraints.columnPHIDs = stringToArray<PHID<'PCOL'>>(taskSearchConstraints.columnPHIDs);
-	}
-
-	if (taskSearchConstraints.hasParents !== undefined) {
-		constraints.hasParents = taskSearchConstraints.hasParents;
-	}
-
-	if (taskSearchConstraints.hasSubtasks !== undefined) {
-		constraints.hasSubtasks = taskSearchConstraints.hasSubtasks;
-	}
-
-	if (taskSearchConstraints.parentIDs) {
-		constraints.parentIDs = stringToArray<PHID<'TASK'>>(taskSearchConstraints.parentIDs);
-	}
-
-	if (taskSearchConstraints.subtaskIDs) {
-		constraints.subtaskIDs = stringToArray<PHID<'TASK'>>(taskSearchConstraints.subtaskIDs);
-	}
-
-	if (taskSearchConstraints.group && taskSearchConstraints.group !== 'none') {
-		constraints.group = taskSearchConstraints.group;
-	}
-
-	if (taskSearchConstraints.createdBefore) {
-		constraints.createdEnd = Number(taskSearchConstraints.createdBefore);
-	}
-
-	if (taskSearchConstraints.createdAfter) {
-		constraints.createdStart = Number(taskSearchConstraints.createdAfter);
-	}
-
-	if (taskSearchConstraints.modifiedBefore) {
-		constraints.modifiedEnd = Number(taskSearchConstraints.modifiedBefore);
-	}
-
-	if (taskSearchConstraints.modifiedAfter) {
-		constraints.modifiedStart = Number(taskSearchConstraints.modifiedAfter);
-	}
-
-	if (taskSearchConstraints.closedStart) {
-		constraints.closedStart = Number(taskSearchConstraints.closedStart);
-	}
-
-	if (taskSearchConstraints.closedEnd) {
-		constraints.closedEnd = Number(taskSearchConstraints.closedEnd);
-	}
-
-	if (taskSearchConstraints.closerPHIDs) {
-		constraints.closerPHIDs = stringToArray<PHID<'USER'>>(taskSearchConstraints.closerPHIDs);
-	}
-
-	if (taskSearchConstraints.query) {
-		constraints.query = taskSearchConstraints.query;
-	}
-
-	if (taskSearchConstraints.subscribers) {
-		constraints.subscribers = stringToArray<PHID<'USER'>>(taskSearchConstraints.subscribers);
-	}
-
-	if (taskSearchConstraints.projects) {
-		constraints.projects = stringToArray<PHID<'PROJ'>>(taskSearchConstraints.projects);
-	}
+	const constraints = buildConstraints(taskSearchConstraints, thisFunc.getNode);
 
 	if (Object.keys(constraints).length > 0) {
 		params.constraints = constraints;
