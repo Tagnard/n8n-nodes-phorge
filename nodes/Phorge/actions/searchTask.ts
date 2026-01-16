@@ -7,31 +7,7 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	const { client } = await connectToPhorgeServer.call(thisFunc);
 	let returnItems: INodeExecutionData[] = [];
 
-	const taskSearchConstraints = (thisFunc.getNodeParameter('taskSearchConstraints', 0) as {
-		ids?: string;
-		phids?: string;
-		assigned?: string;
-		authorPHIDs?: string;
-		status?: string;
-		priorities?: string;
-		subtype?: string;
-		columnPHIDs?: string;
-		hasParents?: boolean;
-		hasSubtasks?: boolean;
-		parentIDs?: string;
-		subtaskIDs?: string;
-		group?: string;
-		createdBefore?: string;
-		createdAfter?: string;
-		modifiedBefore?: string;
-		modifiedAfter?: string;
-		closedStart?: string;
-		closedEnd?: string;
-		closerPHIDs?: string;
-		query?: string;
-		subscribers?: string;
-		projects?: string;
-	}) || {};
+	const taskSearchConstraints = (thisFunc.getNodeParameter('taskSearchConstraints', 0) as IDataObject) || {};
 
 	const attachments = thisFunc.getNodeParameter('attachments', 0) as string[];
 
@@ -62,12 +38,12 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 			json: item as IDataObject,
 		}));
 
-        return returnItems;
+		return returnItems;
 	} catch (error) {
 		if (error instanceof Error) {
 			thisFunc.logger.error(error.cause as string);
 			throw new NodeOperationError(thisFunc.getNode(), `Error fetching tasks: ${error.message}`);
 		}
 	}
-    return []
+	return [];
 }
