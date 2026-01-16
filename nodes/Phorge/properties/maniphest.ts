@@ -20,7 +20,7 @@ const authorPHIDs: INodeProperties = {
 };
 
 const status: INodeProperties = {
-	displayName: 'Status',
+	displayName: 'Statuses',
 	name: 'status',
 	type: 'string',
 	default: 'open',
@@ -37,15 +37,15 @@ const priorities: INodeProperties = {
 };
 
 const subtype: INodeProperties = {
-	displayName: 'Subtype',
+	displayName: 'Subtypes',
 	name: 'subtype',
 	type: 'string',
 	default: '',
-	description: 'Comma-separated listf of subtypes to filter by',
+	description: 'Comma-separated list of subtypes to filter by',
 };
 
 const columnPHIDs: INodeProperties = {
-	displayName: 'Column PHIDs',
+	displayName: 'Columns',
 	name: 'columnPHIDs',
 	type: 'string',
 	default: '',
@@ -54,7 +54,7 @@ const columnPHIDs: INodeProperties = {
 };
 
 const hasParents: INodeProperties = {
-	displayName: 'Has Parents',
+	displayName: 'Open Parents',
 	name: 'hasParents',
 	type: 'boolean',
 	default: false,
@@ -62,7 +62,7 @@ const hasParents: INodeProperties = {
 };
 
 const hasSubtasks: INodeProperties = {
-	displayName: 'Has Subtasks',
+	displayName: 'Open Subtasks',
 	name: 'hasSubtasks',
 	type: 'boolean',
 	default: false,
@@ -158,7 +158,7 @@ const subscribers: INodeProperties = {
 };
 
 const projects: INodeProperties = {
-	displayName: 'Projects',
+	displayName: 'Tags',
 	name: 'projects',
 	type: 'string',
 	default: '',
