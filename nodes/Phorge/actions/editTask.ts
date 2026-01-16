@@ -10,15 +10,15 @@ import { PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
 import { TaskTransaction } from 'phorge-ts/dist/models/maniphest';
 
-export async function updateTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
+export async function editTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
 	const returnItems: INodeExecutionData[] = [];
 
-	const taskPhid = thisFunc.getNodeParameter('taskPHID', 0) as string;
+	const objectIdentifier = thisFunc.getNodeParameter('objectIdentifier', 0) as string;
 	const fields = thisFunc.getNodeParameter('taskUpdateOptions', 0) as IDataObject;
 
-	if (!taskPhid) {
-		throw new NodeOperationError(thisFunc.getNode(), 'Task PHID is required to update a task');
+	if (!objectIdentifier) {
+		throw new NodeOperationError(thisFunc.getNode(), 'Task PHID or ID is required to update a task');
 	}
 
 	const transactions: TaskTransaction[] = [];
@@ -141,7 +141,7 @@ export async function updateTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	}
 
 	try {
-		const updateTask = await client.updateTask(taskPhid as PHID<'TASK'>, transactions);
+		const updateTask = await client.updateTask(objectIdentifier as PHID<'TASK'>, transactions);
 
 		returnItems.push({
 			json: updateTask as IDataObject,

@@ -14,10 +14,14 @@ import type { PHID, ProjectSearchOptions, UserSearchOptions } from 'phorge-ts';
 import { connectToPhorgeServer } from './helpers';
 import {
 	taskCreateProperties,
+	taskEditProperties,
+	taskSearchAttachments,
+	taskSearchConstraints,
 } from './properties/maniphest';
 import { searchTask } from './actions/searchTask';
 import { createTask } from './actions/createTask';
-import { updateTask } from './actions/updateTask';
+import { objectIdentifier } from './properties/shared';
+import { editTask } from './actions/editTask';
 
 let allTagOptions: INodePropertyOptions[] = [];
 
@@ -83,17 +87,12 @@ export class Phorge implements INodeType {
 					},
 				},
 				options: [
+					
 					{
 						name: 'Create',
 						value: 'create',
 						description: 'Create a new task',
 						action: 'Create an task',
-					},
-					{
-						name: 'Create Comment',
-						value: 'createComment',
-						description: 'Create a new comment on an task',
-						action: 'Create a comment on an task',
 					},
 					{
 						name: 'Edit',
@@ -107,6 +106,12 @@ export class Phorge implements INodeType {
 						description: 'Get the data of a single task',
 						action: 'Get an task',
 					},
+					{
+						name: 'Search',
+						value: 'search',
+						description: 'Search for tasks',
+						action: 'Search for tasks',
+					}
 				],
 				default: 'create',
 			},
@@ -150,11 +155,12 @@ export class Phorge implements INodeType {
 				],
 				default: 'search',
 			},
-			// Create Task
-			...taskCreateProperties
-			
-			// taskSearchAttachments,
-			// taskSearchConstraints,
+			// Create 
+			objectIdentifier,
+			...taskCreateProperties,
+			...taskEditProperties,
+			taskSearchAttachments,
+			taskSearchConstraints,
 			// ...taskUpdateProperties,
 			// taskUpdateOptions,
 			// projectSearchAttachments,
@@ -178,7 +184,7 @@ export class Phorge implements INodeType {
 			} else if (operation === 'create') {
 				returnItems = await createTask(this);
 			} else if (operation === 'edit') {
-				returnItems = await updateTask(this);
+				returnItems = await editTask(this);
 			}
 		} else if (resource === 'project') {
 			if (operation === 'search') {

@@ -63,3 +63,18 @@ export const modifiedAfter = (objectType: string): INodeProperties => {
 		description: `Only return ${objectType} with an Unixtimestamp in seconds later than this value`,
 	};
 };
+
+export const objectIdentifier: INodeProperties = {
+		displayName: `Object Identifier`,
+		name: 'objectIdentifier',
+		type: 'string',
+		default: '',
+		placeholder: `PHID-xxxxxx or 123`,
+		description: 'Numeric ID or PHID to operate on',
+		displayOptions: {
+			show: {
+				resource: ['task'],
+				operation: ['edit', 'createComment'],
+			},
+		},
+	};

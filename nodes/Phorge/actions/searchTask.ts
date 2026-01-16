@@ -1,7 +1,7 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 
 import { IDataObject, IExecuteFunctions, INodeExecutionData, NodeOperationError } from 'n8n-workflow';
-import { TaskSearchOptions, PHID } from 'phorge-ts';
+import { TaskSearchOptions, PHID, TaskConstraints } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
 
 export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
@@ -47,7 +47,7 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		params.attachments = attachmentsObj;
 	}
 
-	const constraints: IDataObject = {};
+	const constraints: TaskConstraints = {};
 
 	// IDs
 	if (taskSearchConstraints.ids) {
@@ -66,6 +66,10 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 			);
 		}
 		constraints.phids = phids_list;
+	}
+
+	if (taskSearchConstraints.assigned) {
+		constraints.assigned = [taskSearchConstraints.assigned] as PHID<'USER'>[];
 	}
 
 	if (taskSearchConstraints.createdBefore) {
@@ -95,6 +99,7 @@ export async function searchTask(thisFunc: IExecuteFunctions): Promise<INodeExec
         return returnItems;
 	} catch (error) {
 		if (error instanceof Error) {
+			thisFunc.logger.error(error.cause as string);
 			throw new NodeOperationError(thisFunc.getNode(), `Error fetching tasks: ${error.message}`);
 		}
 	}

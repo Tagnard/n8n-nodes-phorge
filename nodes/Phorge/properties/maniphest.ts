@@ -251,6 +251,25 @@ const comment: INodeProperties = {
 	description: 'Comment to add while creating the task',
 };
 
+const createCommentProperty: INodeProperties = {
+	displayName: 'Comment',
+	name: 'comment',
+	type: 'string',
+	typeOptions: {
+		alwaysOpenEditWindow: true,
+		rows: 5,
+	},
+	default: '',
+	placeholder: 'This is an example comment.',
+	description: 'Comment to add while creating the task',
+	displayOptions: {
+		show: {
+			resource: ['task'],
+			operation: ['createComment'],
+		},
+	},
+};
+
 export const description: INodeProperties = {
 	displayName: 'Description',
 	name: 'description',
@@ -418,6 +437,53 @@ export const title: INodeProperties = {
 	},
 };
 
+export const taskUpdateProperties: INodeProperties[] = [
+	{
+		displayName: 'Task PHID',
+		name: 'taskPHID',
+		type: 'string',
+		default: '',
+		required: true,
+		placeholder: 'PHID-TASK-xxxxxx',
+		description: 'PHID of the task to update',
+		displayOptions: {
+			show: {
+				resource: ['task'],
+				operation: ['edit'],
+			},
+		},
+	},
+];
+
+const createTaskProperties: INodeProperties[] = [
+  addCommits,
+  addParents,
+  addProjects,
+  addSubscribers,
+  addSubtasks,
+  editPolicy,
+  viewPolicy,
+  column,
+  comment,
+  mfa,
+  owner,
+  parent,
+  priority,
+  removeCommits,
+  removeParents,
+  removeProjects,
+  removeSubscribers,
+  removeSubtasks,
+  setCommits,
+  setParents,
+  setProjects,
+  setSubscribers,
+  setSubtasks,
+  space,
+  status,
+  subtype,
+];
+
 const taskSearchConstraintsOptions: INodeProperties[] = [
 	ids,
 	phids('task'),
@@ -472,6 +538,21 @@ export const taskSearchAttachments: INodeProperties = {
 	],
 };
 
+export const taskUpdateOptions: INodeProperties = {
+	displayName: 'Options',
+	name: 'taskUpdateOptions',
+	type: 'collection',
+	default: {},
+	displayOptions: {
+		show: {
+			resource: ['task'],
+			operation: ['edit'],
+		},
+	},
+	options: createTaskProperties,
+};
+
+
 export const taskSearchConstraints: INodeProperties = {
 	displayName: 'Constraints',
 	name: 'taskSearchConstraints',
@@ -485,35 +566,6 @@ export const taskSearchConstraints: INodeProperties = {
 	},
 	options: taskSearchConstraintsOptions,
 };
-
-const createTaskProperties: INodeProperties[] = [
-  addCommits,
-  addParents,
-  addProjects,
-  addSubscribers,
-  addSubtasks,
-  editPolicy,
-  viewPolicy,
-  column,
-  comment,
-  mfa,
-  owner,
-  parent,
-  priority,
-  removeCommits,
-  removeParents,
-  removeProjects,
-  removeSubscribers,
-  removeSubtasks,
-  setCommits,
-  setParents,
-  setProjects,
-  setSubscribers,
-  setSubtasks,
-  space,
-  status,
-  subtype,
-];
 
 export const taskCreateOptions: INodeProperties = {
 	displayName: 'Additional Fields',
@@ -535,34 +587,11 @@ export const taskCreateProperties: INodeProperties[] = [
 	taskCreateOptions,
 ];
 
-export const taskUpdateProperties: INodeProperties[] = [
-	{
-		displayName: 'Task PHID',
-		name: 'taskPHID',
-		type: 'string',
-		default: '',
-		required: true,
-		placeholder: 'PHID-TASK-xxxxxx',
-		description: 'PHID of the task to update',
-		displayOptions: {
-			show: {
-				resource: ['task'],
-				operation: ['edit'],
-			},
-		},
-	},
+export const taskCreateCommentProperties: INodeProperties[] = [
+	createCommentProperty,
 ];
 
-export const taskUpdateOptions: INodeProperties = {
-	displayName: 'Options',
-	name: 'taskUpdateOptions',
-	type: 'collection',
-	default: {},
-	displayOptions: {
-		show: {
-			resource: ['task'],
-			operation: ['edit'],
-		},
-	},
-	options: createTaskProperties,
-};
+export const taskEditProperties: INodeProperties[] = [
+	taskUpdateOptions,
+];
+
