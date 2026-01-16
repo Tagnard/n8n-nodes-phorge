@@ -44,7 +44,7 @@ export const createdAfter = (objectType: string): INodeProperties => {
 
 export const modifiedBefore = (objectType: string): INodeProperties => {
 	return {
-		displayName: 'Modified Before',
+		displayName: 'Updated Before',
 		hint: `Search for ${objectType} modified before a certain date.`,
 		name: 'modifiedBefore',
 		type: 'string',
@@ -55,7 +55,7 @@ export const modifiedBefore = (objectType: string): INodeProperties => {
 
 export const modifiedAfter = (objectType: string): INodeProperties => {
 	return {
-		displayName: 'Modified After',
+		displayName: 'Updated After',
 		hint: `Search for ${objectType} modified after a certain date.`,
 		name: 'modifiedAfter',
 		type: 'string',

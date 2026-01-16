@@ -101,12 +101,6 @@ export class Phorge implements INodeType {
 						action: 'Edit an task',
 					},
 					{
-						name: 'Get',
-						value: 'get',
-						description: 'Get the data of a single task',
-						action: 'Get an task',
-					},
-					{
 						name: 'Search',
 						value: 'search',
 						description: 'Search for tasks',
