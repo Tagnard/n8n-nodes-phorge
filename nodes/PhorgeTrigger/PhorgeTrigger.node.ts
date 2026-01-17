@@ -10,7 +10,7 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 import { Client, TaskSearchOptions } from 'phorge-ts';
-import { taskSearchConstraintsOptions } from '../Phorge/properties/maniphest';
+import { taskTriggerConstraintsOptions } from '../Phorge/properties/maniphest';
 import { buildConstraints } from '../Phorge/FilterHelper';
 
 export class PhorgeTrigger implements INodeType {
@@ -59,7 +59,12 @@ export class PhorgeTrigger implements INodeType {
 				type: 'collection',
 				default: {},
 				placeholder: 'Add Filter',
-				options: taskSearchConstraintsOptions,
+				options: taskTriggerConstraintsOptions,
+				displayOptions: {
+					show: {
+						event: ['taskCreated', 'taskUpdated'],
+					},
+				},
 			},
 		],
 	};

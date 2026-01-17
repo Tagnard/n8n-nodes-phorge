@@ -510,6 +510,23 @@ export const taskSearchConstraintsOptions: INodeProperties[] = [
 	projects,
 ];
 
+export const taskTriggerConstraintsOptions: INodeProperties[] = [
+	assigned,
+	authorPHIDs,
+	status,
+	priorities,
+	subtype,
+	columnPHIDs,
+	hasParents,
+	hasSubtasks,
+	parentIDs,
+	subtaskIDs,
+	closerPHIDs,
+	query,
+	subscribers,
+	projects,
+];
+
 export const taskSearchAttachments: INodeProperties = {
 	displayName: 'Attachments',
 	name: 'attachments',
