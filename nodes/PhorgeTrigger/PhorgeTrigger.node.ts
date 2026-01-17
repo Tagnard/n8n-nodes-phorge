@@ -1,15 +1,17 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 
 import {
+	IDataObject,
+	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeConnectionTypes,
 	IPollFunctions,
-	INodeExecutionData,
-    IDataObject,
-    NodeOperationError,
+	NodeConnectionTypes,
+	NodeOperationError,
 } from 'n8n-workflow';
 import { Client, TaskSearchOptions } from 'phorge-ts';
+import { taskSearchConstraintsOptions } from '../Phorge/properties/maniphest';
+import { buildConstraints } from '../Phorge/FilterHelper';
 
 export class PhorgeTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -51,6 +53,14 @@ export class PhorgeTrigger implements INodeType {
 					},
 				],
 			},
+			{
+				displayName: 'Filters',
+				name: 'filters',
+				type: 'collection',
+				default: {},
+				placeholder: 'Add Filter',
+				options: taskSearchConstraintsOptions,
+			},
 		],
 	};
 
@@ -62,30 +72,34 @@ export class PhorgeTrigger implements INodeType {
 
 		const lastPoll = typeof staticData.lastPoll === 'number' ? staticData.lastPoll : 1;
 
-        this.logger.debug(`Last poll time: ${lastPoll}, Current time: ${now}`);
+		this.logger.debug(`Last poll time: ${lastPoll}, Current time: ${now}`);
 
 		const event = this.getNodeParameter('event') as string;
 		const auth: { host: string; token: string } = await this.getCredentials('phorgeApi');
 
 		const client = new Client(auth.host, auth.token);
 
+		const filters = this.getNodeParameter('filters', 0) as IDataObject;
+		const constraints = buildConstraints(filters, this.getNode);
+
 		// Implement your polling logic here based on the selected event
 		if (event === 'taskCreated') {
 			try {
 				const items = await client.searchTask({
-                    constraints: {
-                        createdStart: lastPoll,
-                    },
-                } as TaskSearchOptions)
-            
-                // Return full task objects
-                returnItems = items.map((item) => ({
-                    json: item as IDataObject,
-                }));
+					constraints: {
+						...constraints,
+						createdStart: lastPoll,
+					},
+				} as TaskSearchOptions);
 
-                staticData.lastPoll = now;
+				// Return full task objects
+				returnItems = items.map((item) => ({
+					json: item as IDataObject,
+				}));
 
-                return [returnItems];
+				staticData.lastPoll = now;
+
+				return [returnItems];
 			} catch (error) {
 				if (error instanceof Error) {
 					throw new NodeOperationError(this.getNode(), `Error creating task: ${error.message}`);
@@ -94,19 +108,20 @@ export class PhorgeTrigger implements INodeType {
 		} else if (event === 'taskUpdated') {
 			try {
 				const items = await client.searchTask({
-                    constraints: {
-                        modifiedStart: lastPoll,
-                    },
-                } as TaskSearchOptions)
-            
-                // Return full task objects
-                returnItems = items.map((item) => ({
-                    json: item as IDataObject,
-                }));
+					constraints: {
+						...constraints,
+						modifiedStart: lastPoll,
+					},
+				} as TaskSearchOptions);
 
-                staticData.lastPoll = now;
+				// Return full task objects
+				returnItems = items.map((item) => ({
+					json: item as IDataObject,
+				}));
 
-                return [returnItems];
+				staticData.lastPoll = now;
+
+				return [returnItems];
 			} catch (error) {
 				if (error instanceof Error) {
 					throw new NodeOperationError(this.getNode(), `Error creating task: ${error.message}`);
