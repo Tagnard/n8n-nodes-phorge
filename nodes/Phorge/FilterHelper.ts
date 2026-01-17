@@ -7,12 +7,12 @@ export function buildConstraints(filters: IDataObject, getNode: () => INode): ID
 
 	// IDs
 	if (filters.ids) {
-		constraints.ids = stringToArray(filters.ids).map(Number);
+		constraints.ids = stringToArray(filters.ids as string).map(Number);
 	}
 
 	// PHIDs
 	if (filters.phids) {
-		const phids_list = stringToArray<PHID<'TASK'>>(filters.phids);
+		const phids_list = stringToArray<PHID<'TASK'>>(filters.phids as string);
 		const phidRegex = /^PHID-TASK-[a-z0-9]+$/;
 		if (!phids_list.every((p) => phidRegex.test(p))) {
 			throw new NodeOperationError(
@@ -24,27 +24,27 @@ export function buildConstraints(filters: IDataObject, getNode: () => INode): ID
 	}
 
 	if (filters.assigned) {
-		constraints.assigned = stringToArray<PHID<'USER'>>(filters.assigned);
+		constraints.assigned = stringToArray<PHID<'USER'>>(filters.assigned as string);
 	}
 
 	if (filters.authorPHIDs) {
-		constraints.authorPHIDs = stringToArray<PHID<'USER'>>(filters.authorPHIDs);
+		constraints.authorPHIDs = stringToArray<PHID<'USER'>>(filters.authorPHIDs as string);
 	}
 
 	if (filters.status) {
-		constraints.statuses = stringToArray(filters.status);
+		constraints.statuses = stringToArray(filters.status as string);
 	}
 
 	if (filters.priorities) {
-		constraints.priorities = stringToArray(filters.priorities).map(Number);
+		constraints.priorities = stringToArray(filters.priorities as string).map(Number);
 	}
 
 	if (filters.subtype) {
-		constraints.subtypes = stringToArray(filters.subtype);
+		constraints.subtypes = stringToArray(filters.subtype as string);
 	}
 
 	if (filters.columnPHIDs) {
-		constraints.columnPHIDs = stringToArray<PHID<'PCOL'>>(filters.columnPHIDs);
+		constraints.columnPHIDs = stringToArray<PHID<'PCOL'>>(filters.columnPHIDs as string);
 	}
 
 	if (filters.hasParents !== undefined) {
@@ -56,11 +56,11 @@ export function buildConstraints(filters: IDataObject, getNode: () => INode): ID
 	}
 
 	if (filters.parentIDs) {
-		constraints.parentIDs = stringToArray<PHID<'TASK'>>(filters.parentIDs);
+		constraints.parentIDs = stringToArray<PHID<'TASK'>>(filters.parentIDs as string);
 	}
 
 	if (filters.subtaskIDs) {
-		constraints.subtaskIDs = stringToArray<PHID<'TASK'>>(filters.subtaskIDs);
+		constraints.subtaskIDs = stringToArray<PHID<'TASK'>>(filters.subtaskIDs as string);
 	}
 
 	if (filters.group && filters.group !== 'none') {
@@ -92,7 +92,7 @@ export function buildConstraints(filters: IDataObject, getNode: () => INode): ID
 	}
 
 	if (filters.closerPHIDs) {
-		constraints.closerPHIDs = stringToArray<PHID<'USER'>>(filters.closerPHIDs);
+		constraints.closerPHIDs = stringToArray<PHID<'USER'>>(filters.closerPHIDs as string);
 	}
 
 	if (filters.query) {
@@ -100,11 +100,11 @@ export function buildConstraints(filters: IDataObject, getNode: () => INode): ID
 	}
 
 	if (filters.subscribers) {
-		constraints.subscribers = stringToArray<PHID<'USER'>>(filters.subscribers);
+		constraints.subscribers = stringToArray<PHID<'USER'>>(filters.subscribers as string);
 	}
 
 	if (filters.projects) {
-		constraints.projects = stringToArray<PHID<'PROJ'>>(filters.projects);
+		constraints.projects = stringToArray<PHID<'PROJ'>>(filters.projects as string);
 	}
 
 	return constraints;

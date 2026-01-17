@@ -484,7 +484,7 @@ const createTaskProperties: INodeProperties[] = [
   subtype,
 ];
 
-const taskSearchConstraintsOptions: INodeProperties[] = [
+export const taskSearchConstraintsOptions: INodeProperties[] = [
 	ids,
 	phids('task'),
 	assigned,
