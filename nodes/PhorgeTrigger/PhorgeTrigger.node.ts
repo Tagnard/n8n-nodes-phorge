@@ -9,7 +9,7 @@ import {
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { Client, TaskSearchOptions } from 'phorge-ts';
+import { Client, ManiphestSearchOptions } from 'phorge-ts';
 import { taskTriggerConstraintsOptions } from '../Phorge/properties/maniphest';
 import { buildConstraints } from '../Phorge/FilterHelper';
 
@@ -90,12 +90,12 @@ export class PhorgeTrigger implements INodeType {
 		// Implement your polling logic here based on the selected event
 		if (event === 'taskCreated') {
 			try {
-				const items = await client.searchTask({
+				const items = await client.searchManiphest({
 					constraints: {
 						...constraints,
 						createdStart: lastPoll,
 					},
-				} as TaskSearchOptions);
+				} as ManiphestSearchOptions);
 
 				// Return full task objects
 				returnItems = items.map((item) => ({
@@ -112,12 +112,12 @@ export class PhorgeTrigger implements INodeType {
 			}
 		} else if (event === 'taskUpdated') {
 			try {
-				const items = await client.searchTask({
+				const items = await client.searchManiphest({
 					constraints: {
 						...constraints,
 						modifiedStart: lastPoll,
 					},
-				} as TaskSearchOptions);
+				} as ManiphestSearchOptions);
 
 				// Return full task objects
 				returnItems = items.map((item) => ({

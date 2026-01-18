@@ -8,7 +8,7 @@ import {
 } from 'n8n-workflow';
 import { PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
-import { TaskTransaction } from 'phorge-ts/dist/models/maniphest';
+import { ManiphestUpdateTransaction } from 'phorge-ts/dist/models/maniphest';
 
 export async function editTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
@@ -21,7 +21,7 @@ export async function editTask(thisFunc: IExecuteFunctions): Promise<INodeExecut
 		throw new NodeOperationError(thisFunc.getNode(), 'Task PHID or ID is required to update a task');
 	}
 
-	const transactions: TaskTransaction[] = [];
+	const transactions: ManiphestUpdateTransaction[] = [];
 
 	if (fields.addCommits) {
 		transactions.push({ type: 'commits.add', value: stringToArray(fields.addCommits as string) });
@@ -141,7 +141,7 @@ export async function editTask(thisFunc: IExecuteFunctions): Promise<INodeExecut
 	}
 
 	try {
-		const updateTask = await client.updateTask(objectIdentifier as PHID<'TASK'>, transactions);
+		const updateTask = await client.updateManiphest(objectIdentifier as PHID<'TASK'>, transactions);
 
 		returnItems.push({
 			json: updateTask as IDataObject,

@@ -6,9 +6,8 @@ import {
 	INodeExecutionData,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { PHID } from 'phorge-ts';
+import { ManiphestUpdateTransaction, PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
-import { TaskTransaction } from 'phorge-ts/dist/models/maniphest';
 
 export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);
@@ -57,7 +56,7 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		);
 	}
 
-	const transactions: TaskTransaction[] = [
+	const transactions: ManiphestUpdateTransaction[] = [
 		{ type: 'title', value: title },
 		{ type: 'description', value: description },
 	];
@@ -153,7 +152,7 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 	}
 
 	try {
-		const createdTask = await client.createTask(transactions);
+		const createdTask = await client.createManiphest(transactions);
 
 		returnItems.push({
 			json: createdTask as IDataObject,
