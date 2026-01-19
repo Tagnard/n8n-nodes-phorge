@@ -1,5 +1,6 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
-
+import { Client, ManiphestSearchOptions } from 'phorge-ts';
+import { taskTriggerConstraintsOptions } from '../Phorge/properties/maniphest';
+import { buildConstraints } from '../Phorge/FilterHelper';
 import {
 	IDataObject,
 	INodeExecutionData,
@@ -9,9 +10,6 @@ import {
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { Client, ManiphestSearchOptions } from 'phorge-ts';
-import { taskTriggerConstraintsOptions } from '../Phorge/properties/maniphest';
-import { buildConstraints } from '../Phorge/FilterHelper';
 
 export class PhorgeTrigger implements INodeType {
 	description: INodeTypeDescription = {

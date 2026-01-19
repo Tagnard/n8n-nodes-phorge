@@ -1,5 +1,3 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
-
 import {
 	IExecuteFunctions,
 	INodeExecutionData,
