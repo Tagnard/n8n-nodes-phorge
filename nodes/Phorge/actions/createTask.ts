@@ -47,8 +47,6 @@ export async function createTask(thisFunc: IExecuteFunctions): Promise<INodeExec
 		title: string;
 	};
 
-	thisFunc.logger.info(`Creating task with title: ${fields.title}`);
-
 	if (!title || !description) {
 		throw new NodeOperationError(
 			thisFunc.getNode(),

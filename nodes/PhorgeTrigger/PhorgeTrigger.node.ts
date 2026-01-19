@@ -22,7 +22,7 @@ export class PhorgeTrigger implements INodeType {
 			'Fetches items from Phorge and starts the workflow on specified polling intervals.',
 		subtitle: '={{"Phorge Trigger"}}',
 		defaults: {
-			name: 'Phorge Trigger',
+			name: 'phorgeTrigger',
 		},
 		credentials: [
 			{
@@ -75,8 +75,6 @@ export class PhorgeTrigger implements INodeType {
 
 		const lastPoll = typeof staticData.lastPoll === 'number' ? staticData.lastPoll : 1;
 
-		this.logger.debug(`Last poll time: ${lastPoll}, Current time: ${now}`);
-
 		const event = this.getNodeParameter('event') as string;
 		const auth: { host: string; token: string } = await this.getCredentials('phorgeApi');
 
@@ -85,7 +83,6 @@ export class PhorgeTrigger implements INodeType {
 		const filters = this.getNodeParameter('filters', 0) as IDataObject;
 		const constraints = buildConstraints(filters, this.getNode);
 
-		// Implement your polling logic here based on the selected event
 		if (event === 'taskCreated') {
 			try {
 				const items = await client.searchManiphest({

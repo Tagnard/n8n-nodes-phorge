@@ -6,9 +6,8 @@ import {
 	INodeExecutionData,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { PHID } from 'phorge-ts';
+import { ManiphestUpdateTransaction, PHID } from 'phorge-ts';
 import { connectToPhorgeServer, stringToArray } from '../helpers';
-import { ManiphestUpdateTransaction } from 'phorge-ts/dist/models/maniphest';
 
 export async function editTask(thisFunc: IExecuteFunctions): Promise<INodeExecutionData[]> {
 	const { client } = await connectToPhorgeServer.call(thisFunc);

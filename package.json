@@ -49,6 +49,6 @@
     "n8n-workflow": "^1.120.6"
   },
   "dependencies": {
-    "phorge-ts": "^1.0.1"
+    "phorge-ts": "^1.0.2"
   }
 }
